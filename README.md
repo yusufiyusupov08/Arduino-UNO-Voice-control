@@ -1,28 +1,25 @@
-# Arduino-UNO-Voice-control
+    // ARDUINO
+    #include <Servo.h>#include <Stepper.h>#include <SoftwareSerial.h>
+    
+    Servo myServo;  
+    
+    const int servoPin = 5;        // Сервопривод (SG90)
+    const int ledPin = 6;          // Светодиод
+    const int micRx = 7;           // RX микрофона
+    const int micTx = 8;           // TX микрофона
 
-#include <Servo.h>
-#include <Stepper.h>
-#include <SoftwareSerial.h>
+    SoftwareSerial voiceModule(micRx, micTx);
 
-Servo myServo;  
+    bool doorOpen = false;  
+    bool lightOn = false;   
 
-const int servoPin = 5;        // Сервопривод (SG90)
-const int ledPin = 6;          // Светодиод
-const int micRx = 7;           // RX микрофона
-const int micTx = 8;           // TX микрофона
+    // Настройки шагового двигателя
+    const int stepsPerRevolution = 2048;  
+    Stepper myStepper(stepsPerRevolution, 9, 10, 11, 12);  // Подключение к ULN2003
 
-SoftwareSerial voiceModule(micRx, micTx);
+    bool stepperPosition = false;
 
-bool doorOpen = false;  
-bool lightOn = false;   
-
-// Настройки шагового двигателя
-const int stepsPerRevolution = 2048;  
-Stepper myStepper(stepsPerRevolution, 9, 10, 11, 12);  // Подключение к ULN2003
-
-bool stepperPosition = false;
-
-void setup() {
+    void setup() {
     pinMode(ledPin, OUTPUT);
     
     myServo.attach(servoPin);
@@ -39,11 +36,11 @@ void setup() {
     Serial.println("'r' - шаговый двигатель вперед (270°)");
     Serial.println("'b' - шаговый двигатель назад (270°)");
     Serial.println("Голосовые команды: 'open the door', 'close the door', 'turn on the light', 'turn off the light', 'open the garage', 'close the garage'");
-}
-
-void loop() {
-    if (Serial.available() > 0) {
-        char command = Serial.read();  
+    }
+    
+    void loop() {
+        if (Serial.available() > 0) {
+            char command = Serial.read();  
 
         if (command == 'd') {  
             doorOpen = !doorOpen;  
@@ -98,12 +95,12 @@ void loop() {
             Serial.println("Голосовая команда не распознана");
         }
     }
-}
+    }
 
 
-// "open the door" → Открывает дверь
-// "close the door" → Закрывает дверь
-// "turn on the light" → Включает свет
-// "turn off the light" → Выключает свет
-// "open the garage" → Поворачивает шаговый двигатель назад на 320°
-// "close the garage" → Поворачивает шаговый двигатель вперед на 320°
+    // "open the door" → Открывает дверь
+    // "close the door" → Закрывает дверь
+    // "turn on the light" → Включает свет
+    // "turn off the light" → Выключает свет
+    // "open the garage" → Поворачивает шаговый двигатель назад на 320°
+    // "close the garage" → Поворачивает шаговый двигатель вперед на 320°
